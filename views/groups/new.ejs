@@ -1,18 +1,90 @@
-<% include ../header %>
-
-<h1>New Group</h1>
-
-<a href="/groups" class="btn btn-success">Back</a>
-
-<form action="/groups/create" method="POST">
-  <label for="user_name">Name</label>
-  <input id="user_name" type="text" name="name" value="<%= group.name %>">
-  <br>
-  <label for="user_description">Description</label>
-  <textarea id="user_description" name="description"><%= group.description %></textarea>
-  <br>
-  <button>Create Group</button>
-</form>
 
 
-<% include ../footer %>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=400, user-scalable=yes" />
+        <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-precomposed.png" />
+
+        <meta name="description" content="ShareOut is a free website for sharing expenses,tracking bills among friends and rommies.Its available on iphone,android and web!">
+        <meta property="og:image" content="http://dx0qysuen8cbs.cloudfront.net/assets/fat_rabbit/homepage/logo-small-transparent-c9ec71fb36d981af9415635acf0f1b5b.png"/>
+        <meta property="og:image:secure_url" content="https://dx0qysuen8cbs.cloudfront.net/assets/fat_rabbit/homepage/logo-small-transparent-c9ec71fb36d981af9415635acf0f1b5b.png" />
+        <title>Sign up-ShareOut</title>
+        
+        <link href='https://fonts.googleapis.com/css?family=Lato:400,400italic,700' rel='stylesheet' type='text/css'>
+        <link rel='stylesheet' href='/stylesheets/normalize.css' />
+        <link rel='stylesheet' href='/stylesheets/helpers.css' />
+        <link rel='stylesheet' href='/stylesheets/shareout.css' />
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+        <link rel='stylesheet' href='/stylesheets/groups.css' />
+        <link rel='stylesheet' href='/stylesheets/users.css' /> 
+        <link rel='stylesheet' href='/stylesheets/share_out.css' /> 
+
+    </head>
+    
+    <body id="fat_rabbit">
+
+    <div class="headerBar"></div>
+<nav class="main-menu">
+        <ul class="nav pull-left">
+          <% if (current_user) { %>
+            <li class=""><a href="/groups/dashboard">Dashboard</a></li>
+            <li class=""><a href="/groups">My Groups</a></li>
+          <% } else { %>
+            <li class="active"><a href="/">Home</a></li>
+          <% } %>
+        </ul>
+          <% if (current_user) { %>
+            <div class="welcome-nav pull-right">
+              Welcome <%= current_user.name %>
+              <a href="/users/sign_out">Sign Out</a>
+            </div>
+          <% } else { %>
+            <ul class="auth-nav nav pull-right">
+              <li class="auth-nav-sign-in"><a href="/users/sign_in">Sign In</a></li>
+              <li class="auth-nav-sign-up"><a href="/users/sign_up">Sign Up</a></li>
+            </ul>
+          <% } %>
+        <div class="clearfix"></div>
+      </nav>
+        <div class="wrapper">
+            <div class="toppad">&nbsp;</div>
+                    
+               <div class="flex_container blank_page clearfix">
+                    <% if (alert_error) { %>
+                        <p class="alert alert-error"><%= alert_error %></p>
+                    <% } %>
+
+                    <% if (alert_success) { %>
+                        <p class="alert alert-success"><%= alert_success %></p>
+                    <% } %>
+                <a href="/"><img alt="Logo" class="envelope" height="200" src="/images/logo_1546739_web.jpg" width="200" /></a>
+                <div class="content-block">
+                    <h2>
+                        New Group
+                    </h2>
+                    <form accept-charset="UTF-8" action="/groups/create" class="form-stacked" id="new_user" method="post"> 
+                        <div style="font-size: 24px; line-height: 140%; margin: 16px 0 5px">
+                            Name
+                        </div>
+                        <input autocomplete="off" id="user_name" name="name" placeholder="" size="30"  tabindex="1" type="text" value="<%= group.name %>" />
+                         <div style="font-size: 24px; line-height: 140%; margin: 16px 0 5px">
+                            Description
+                        </div>
+                           <textarea id="user_description" name="description" size="50"><%= group.description %></textarea>
+                        
+
+                        <div style="position: relative; margin-top: 10px">
+                            <input autocomplete="off" class="shinybtn" type="submit" value="Create Group" />
+                        </div>
+
+                    </form>  </div>
+            </div>
+        </div>
+
+        
+        <div class="footerBar"></div>
+    </body>
+</html>
+
