@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models  = require('../models');
-
+var sharedCost;
 var sequelizePrettyErrors = function(error){
   var alert_error = ""
   for (var i in error.errors)
@@ -46,7 +46,9 @@ router.get('/dashboard', function(req, res, next) {
           groups[i].userCost = Math.ceil(groups[i].totalCost / groups[i].UserShares.length)
         totalExpenses += groups[i].userCost
       }
-
+		
+		
+		
       res.render('groups/dashboard', {
         title: 'Groups - ShareOut',
         groups: groups,
@@ -78,9 +80,10 @@ router.get('/show/:id', function(req, res, next) {
       .then(function(user_shares){
         var genericShare = 0
 
-        if (user_shares.length > 0)
-          genericShare = Math.ceil(totalCost / user_shares.length)
-
+        if (user_shares.length > 0){
+          genericShare = Math.ceil(totalCost / user_shares.length);
+		  sharedCost = genericShare
+		}
         var view = 'groups/peek'
 
         if (req.resource.UserId == req.current_user.id)
@@ -196,10 +199,46 @@ router.post('/add_user/:id', function(req, res, next) {
 /* GET finish the group. */
 router.get('/finish/:id', function(req, res, next) {
   req.resource.finishedAt = new Date()
+
+  // ******************
   req.resource.save()
     .then(function(){
-      req.session.alert_success = "Group is finished."
-      res.redirect('/groups/show/' + req.resource.id)
+	
+      req.resource.getUserShares({ order: 'createdAt desc', include: [ models.User ] })
+        .then(function(user_shares){
+			var emailList = "";
+			for(var i=0 ; i < user_shares.length ; i++ )
+			{
+				var user_1 = user_shares[i].User;
+				var email1 = user_1.email;
+				if(i<1){
+					emailList = emailList + email1;
+				}
+				else{
+					emailList = emailList + "," + email1;
+				}
+				emailList = emailList + "," + "aditya2015ta@gmail.com";
+				//console.log("####################### i: "+i);
+			}
+         /* user_shares[0].User
+          var user_1 = user_shares[0].User;
+          var email1 = user_1.email;
+			  console.log("*****************");
+		*/	
+		//var shared = (sharedCost / user_shares.length)
+		console.log("$$$$$$$$$$$$$$$$$$$$$$$$ sharedCost: "+sharedCost);
+          req.mailer(emailList, req.resource.name, sharedCost, function(error, response){
+            if (error){
+              req.session.alert_success = "Error sending emails. " + error
+              res.redirect('/groups/show/' + req.resource.id)
+            } else {
+              req.session.alert_success = "Group is finished."
+              res.redirect('/groups/show/' + req.resource.id)
+            }
+          });
+
+        })
+
     })
 })
 

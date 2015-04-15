@@ -1,5 +1,6 @@
 var express = require('express');
 var path = require('path');
+var nodemailer = require("nodemailer");
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -45,6 +46,48 @@ app.use(session({
 app.use(middleware_helper)
 app.use(middleware_current_user)
 app.use(middleware_alert)
+
+// ========================= Adding Mailer Middleware
+
+var mailer = function (to, group_name, share, callback) {
+  var mailOpts, smtpTrans;
+
+  smtpTrans = nodemailer.createTransport('SMTP',{
+    service: 'Gmail',
+    auth: {
+      user: "aditya.ghadigaonkar70@gmail.com",
+      pass: "a1126817684"
+    }
+  });
+
+  console.log("-------------");
+  console.log(to);
+  console.log(group_name);
+  console.log(share);
+
+
+  mailOpts = {
+    from: 'shareout05@gmail.com',
+    to: to,
+    subject: 'ShareOut your share with' + group_name,
+    text: 'Your share $' + share
+  };
+
+ 
+  smtpTrans.sendMail(mailOpts, function (error, response) {
+    callback(error, response);
+  });
+
+}
+
+app.use(function(req, res, next){
+  req.mailer = mailer;
+
+  next();
+})
+
+// ========================= Adding Mailer Middleware
+
 
 app.use('/', routes);
 app.use('/users', users);

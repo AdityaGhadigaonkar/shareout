@@ -20,7 +20,8 @@
     "sequelize-cli": "*",
     "express-session": "*",
     "session-file-store": "*",
-    "moment": "~2.9.0"
+    "moment": "~2.9.0",
+	"nodemailer": "0.7.0"
   },
   "devDependencies": {
   }
